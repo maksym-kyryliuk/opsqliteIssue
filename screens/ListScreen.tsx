@@ -1,8 +1,15 @@
 import * as React from 'react';
 import {CategoryDTO, db, getAll} from '../data/db';
-import {Button, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Button,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
-export default function DetailsScreen({navigation}: any) {
+export default function ListScreen({navigation}: any) {
   const [categories, setCategories] = React.useState<CategoryDTO[]>([]);
 
   //Init categories
@@ -23,12 +30,13 @@ export default function DetailsScreen({navigation}: any) {
         },
       ],
       callback: response => {
-        setCategories(
-          response.rows?._array.map((category: any) => {
-            return {id: category.id, title: category.title};
-          }),
-        );
-        console.log(response.rows._array);
+        response.rows?._array
+          ? setCategories(
+              response.rows?._array.map((category: any) => {
+                return {id: category.id, title: category.title};
+              }),
+            )
+          : setCategories([]);
       },
     });
 
@@ -45,14 +53,15 @@ export default function DetailsScreen({navigation}: any) {
           onPress={() => navigation.push('AddCategory')}
         />
       </View>
-      <View style={styles.buttons}>
-        <Button title="Go back" onPress={() => navigation.goBack()} />
-      </View>
       <ScrollView style={styles.buttons}>
         {categories.map(category => (
-          <Text key={category.id} style={styles.text}>
-            {category.title}
-          </Text>
+          <Pressable
+            key={category.id}
+            onPress={() =>
+              navigation.push('CategoryDetails', {category: category})
+            }>
+            <Text style={styles.text}>{category.title}</Text>
+          </Pressable>
         ))}
       </ScrollView>
     </View>
@@ -66,7 +75,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttons: {
-    paddingTop: 35,
+    paddingTop: 50,
   },
   text: {
     color: 'black',

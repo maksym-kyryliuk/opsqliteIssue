@@ -4,8 +4,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useEffect} from 'react';
 import {enablePragma, initDB} from './data/db';
 import AddCategoryScreen from './screens/AddCategoryScreen';
-import DetailsScreen from './screens/DetailsScreen';
-import HomeScreen from './screens/HomeScreen';
+import ListScreen from './screens/ListScreen';
+import CategoryDetailsScreen from './screens/CategoryDetailsScreen';
+import EditCategoryScreen from './screens/EditCategoryScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,9 +22,13 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Details" component={ListScreen} />
         <Stack.Screen name="AddCategory" component={AddCategoryScreen} />
+        <Stack.Screen name="EditCategory" component={EditCategoryScreen} />
+        <Stack.Screen
+          name="CategoryDetails"
+          component={CategoryDetailsScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

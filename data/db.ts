@@ -55,3 +55,14 @@ export const addCategory = async (title: string): Promise<string> => {
 
   return newId.toString();
 };
+
+export const updateCategory = async (category: CategoryDTO): Promise<void> => {
+  await db.executeAsync('UPDATE categories SET title = ? WHERE id = ?', [
+    category.title,
+    category.id,
+  ]);
+};
+
+export const deleteCategory = async (id: string): Promise<void> => {
+  await db.executeAsync('DELETE FROM categories WHERE id = ?', [id]);
+};
