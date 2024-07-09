@@ -7,6 +7,7 @@ import AddCategoryScreen from './screens/AddCategoryScreen';
 import ListScreen from './screens/ListScreen';
 import CategoryDetailsScreen from './screens/CategoryDetailsScreen';
 import EditCategoryScreen from './screens/EditCategoryScreen';
+import HomeScreen from './screens/HomeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Details" component={ListScreen} />
         <Stack.Screen name="AddCategory" component={AddCategoryScreen} />
         <Stack.Screen name="EditCategory" component={EditCategoryScreen} />

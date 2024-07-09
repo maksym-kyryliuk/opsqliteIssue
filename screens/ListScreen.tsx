@@ -1,5 +1,12 @@
 import * as React from 'react';
-import {CategoryDTO, db, getAll} from '../data/db';
+import {
+  addCategoryWithRecords,
+  CategoryDTO,
+  db,
+  deleteCategory,
+  getAll,
+  SQL_CATEGORIES_WITH_SUM,
+} from '../data/db';
 import {
   Button,
   Pressable,
@@ -22,7 +29,7 @@ export default function ListScreen({navigation}: any) {
   //Subscription to the categories table
   React.useEffect(() => {
     const unsubscribe = db.reactiveExecute({
-      query: 'SELECT * FROM categories',
+      query: SQL_CATEGORIES_WITH_SUM,
       arguments: [],
       fireOn: [
         {
@@ -30,10 +37,15 @@ export default function ListScreen({navigation}: any) {
         },
       ],
       callback: response => {
+        console.log('Categories updated', response);
         response.rows?._array
           ? setCategories(
               response.rows?._array.map((category: any) => {
-                return {id: category.id, title: category.title};
+                return {
+                  id: category.id,
+                  title: category.title,
+                  balance: category.balance,
+                };
               }),
             )
           : setCategories([]);
@@ -47,21 +59,35 @@ export default function ListScreen({navigation}: any) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttons}>
+      {/* <View style={styles.buttons}>
         <Button
           title="Add category"
           onPress={() => navigation.push('AddCategory')}
         />
+      </View> */}
+      <View style={styles.buttons}>
+        <Button
+          title="Add category with records"
+          onPress={addCategoryWithRecords}
+        />
       </View>
       <ScrollView style={styles.buttons}>
-        {categories.map(category => (
-          <Pressable
-            key={category.id}
-            onPress={() =>
-              navigation.push('CategoryDetails', {category: category})
-            }>
-            <Text style={styles.text}>{category.title}</Text>
-          </Pressable>
+        {categories.map((category, index) => (
+          <View style={styles.item} key={index}>
+            <View style={styles.itemText}>
+              <Pressable
+                key={category.id}
+                onPress={() =>
+                  navigation.push('CategoryDetails', {category: category})
+                }>
+                <Text style={styles.text}>{category.title}</Text>
+              </Pressable>
+              <Text>Balance: {category.balance}</Text>
+            </View>
+            <Pressable onPress={() => deleteCategory(category.id)}>
+              <Text style={styles.deleteButton}>X</Text>
+            </Pressable>
+          </View>
         ))}
       </ScrollView>
     </View>
@@ -71,16 +97,26 @@ export default function ListScreen({navigation}: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   buttons: {
     paddingTop: 50,
   },
   text: {
     color: 'black',
-    borderWidth: 1,
-    padding: 8,
-    borderRadius: 15,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+  },
+  item: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  itemText: {
+    flexDirection: 'row',
+    flex: 1,
+  },
+  deleteButton: {
+    color: 'red',
+    paddingHorizontal: 16,
   },
 });
