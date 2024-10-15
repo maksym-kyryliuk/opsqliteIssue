@@ -27,9 +27,6 @@ export default function CategoryDetailsScreen({navigation, route}: any) {
         },
       ],
       callback: response => {
-        //HERE IS THE ISSUE. Response does not contain the title
-        // Example of response:
-        //  LOG  {"insertId": 1, "metadata": [{"index": 0, "name": "title", "type": "TEXT"}], "rowsAffected": 1}
         console.log(response);
       },
     });

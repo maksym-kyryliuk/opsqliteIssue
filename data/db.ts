@@ -14,7 +14,7 @@ export const enablePragma = () => {
 export const initDB = async () => {
   await db.transaction(async tx => {
     try {
-      await tx.executeAsync(`        
+      await tx.execute(`        
         CREATE TABLE IF NOT EXISTS categories (
             id                 TEXT PRIMARY KEY NOT NULL,
             title              TEXT NOT NULL,
@@ -45,10 +45,10 @@ export type CategoryDTO = {
 };
 
 export const getAll = async (): Promise<CategoryDTO[]> => {
-  const data = await db.executeAsync(SQL_CATEGORIES_WITH_SUM, []);
+  const {rows} = await db.execute(SQL_CATEGORIES_WITH_SUM, []);
 
-  return data.rows?._array
-    ? data.rows?._array.map((category: any) => {
+  return rows?.length > 0
+    ? rows.map((category: any) => {
         return {
           id: category.id,
           title: category.title,
@@ -60,7 +60,7 @@ export const getAll = async (): Promise<CategoryDTO[]> => {
 
 export const addCategory = async (title: string): Promise<string> => {
   const newId = uuid.v4();
-  await db.executeAsync('INSERT INTO categories (id, title) values (?, ?)', [
+  await db.execute('INSERT INTO categories (id, title) values (?, ?)', [
     newId,
     title,
   ]);
@@ -69,7 +69,7 @@ export const addCategory = async (title: string): Promise<string> => {
 };
 
 export const updateCategory = async (category: CategoryDTO): Promise<void> => {
-  await db.executeAsync('UPDATE categories SET title = ? WHERE id = ?', [
+  await db.execute('UPDATE categories SET title = ? WHERE id = ?', [
     category.title,
     category.id,
   ]);
@@ -80,7 +80,7 @@ export const deleteCategory = async (id: string): Promise<void> => {
     ['DELETE FROM records WHERE category_id = ?', [id]],
     ['DELETE FROM categories WHERE id = ?', [id]],
   ];
-  await db.executeBatchAsync(commands);
+  await db.executeBatch(commands);
 };
 
 export const addCategoryWithRecords = async (): Promise<void> => {
@@ -88,12 +88,12 @@ export const addCategoryWithRecords = async (): Promise<void> => {
 
   await db.transaction(async tx => {
     var finalName = nameList[Math.floor(Math.random() * nameList.length)];
-    await tx.executeAsync('INSERT INTO categories (id, title) values (?, ?)', [
+    await tx.execute('INSERT INTO categories (id, title) values (?, ?)', [
       category_id,
       finalName,
     ]);
 
-    await tx.executeAsync(
+    await tx.execute(
       'INSERT INTO records (id, amount, converted_amount, category_id, record_type) values (?, ?, ?, ?, ?)',
       [
         uuid.v4(),
@@ -104,7 +104,7 @@ export const addCategoryWithRecords = async (): Promise<void> => {
       ],
     );
 
-    await tx.executeAsync(
+    await tx.execute(
       'INSERT INTO records (id, amount, converted_amount, category_id, record_type) values (?, ?, ?, ?, ?)',
       [
         uuid.v4(),
@@ -115,7 +115,7 @@ export const addCategoryWithRecords = async (): Promise<void> => {
       ],
     );
 
-    await tx.executeAsync(
+    await tx.execute(
       'INSERT INTO records (id, amount, converted_amount, category_id, record_type) values (?, ?, ?, ?, ?)',
       [
         uuid.v4(),
@@ -125,6 +125,8 @@ export const addCategoryWithRecords = async (): Promise<void> => {
         Math.round(Math.random()),
       ],
     );
+
+    tx.commit();
   });
 };
 

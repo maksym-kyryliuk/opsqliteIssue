@@ -59,12 +59,6 @@ export default function ListScreen({navigation}: any) {
 
   return (
     <View style={styles.container}>
-      {/* <View style={styles.buttons}>
-        <Button
-          title="Add category"
-          onPress={() => navigation.push('AddCategory')}
-        />
-      </View> */}
       <View style={styles.buttons}>
         <Button
           title="Add category with records"
