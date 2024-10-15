@@ -83,50 +83,59 @@ export const deleteCategory = async (id: string): Promise<void> => {
   await db.executeBatch(commands);
 };
 
-export const addCategoryWithRecords = async (): Promise<void> => {
+export const addCategoryWithRecords = async (
+  throwError: boolean = false,
+): Promise<void> => {
   const category_id = uuid.v4();
 
   await db.transaction(async tx => {
-    var finalName = nameList[Math.floor(Math.random() * nameList.length)];
-    await tx.execute('INSERT INTO categories (id, title) values (?, ?)', [
-      category_id,
-      finalName,
-    ]);
-
-    await tx.execute(
-      'INSERT INTO records (id, amount, converted_amount, category_id, record_type) values (?, ?, ?, ?, ?)',
-      [
-        uuid.v4(),
-        Math.floor(Math.random() * 1000 + 1),
-        Math.floor(Math.random() * 1000 + 1),
+    try {
+      var finalName = nameList[Math.floor(Math.random() * nameList.length)];
+      await tx.execute('INSERT INTO categories (id, title) values (?, ?)', [
         category_id,
-        Math.round(Math.random()),
-      ],
-    );
+        finalName,
+      ]);
 
-    await tx.execute(
-      'INSERT INTO records (id, amount, converted_amount, category_id, record_type) values (?, ?, ?, ?, ?)',
-      [
-        uuid.v4(),
-        Math.floor(Math.random() * 1000 + 1),
-        Math.floor(Math.random() * 1000 + 1),
-        category_id,
-        Math.round(Math.random()),
-      ],
-    );
+      await tx.execute(
+        'INSERT INTO records (id, amount, converted_amount, category_id, record_type) values (?, ?, ?, ?, ?)',
+        [
+          uuid.v4(),
+          Math.floor(Math.random() * 1000 + 1),
+          Math.floor(Math.random() * 1000 + 1),
+          category_id,
+          Math.round(Math.random()),
+        ],
+      );
 
-    await tx.execute(
-      'INSERT INTO records (id, amount, converted_amount, category_id, record_type) values (?, ?, ?, ?, ?)',
-      [
-        uuid.v4(),
-        Math.floor(Math.random() * 1000 + 1),
-        Math.floor(Math.random() * 1000 + 1),
-        category_id,
-        Math.round(Math.random()),
-      ],
-    );
+      await tx.execute(
+        'INSERT INTO records (id, amount, converted_amount, category_id, record_type) values (?, ?, ?, ?, ?)',
+        [
+          uuid.v4(),
+          Math.floor(Math.random() * 1000 + 1),
+          Math.floor(Math.random() * 1000 + 1),
+          category_id,
+          Math.round(Math.random()),
+        ],
+      );
 
-    tx.commit();
+      if (throwError) {
+        throw new Error('Error thrown');
+      }
+      await tx.execute(
+        'INSERT INTO records (id, amount, converted_amount, category_id, record_type) values (?, ?, ?, ?, ?)',
+        [
+          uuid.v4(),
+          Math.floor(Math.random() * 1000 + 1),
+          Math.floor(Math.random() * 1000 + 1),
+          category_id,
+          Math.round(Math.random()),
+        ],
+      );
+
+      tx.commit();
+    } catch (e) {
+      tx.rollback();
+    }
   });
 };
 

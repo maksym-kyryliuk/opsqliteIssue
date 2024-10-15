@@ -62,7 +62,12 @@ export default function ListScreen({navigation}: any) {
       <View style={styles.buttons}>
         <Button
           title="Add category with records"
-          onPress={addCategoryWithRecords}
+          onPress={() => addCategoryWithRecords(false)}
+        />
+        <View style={styles.spacer} />
+        <Button
+          title="Test error"
+          onPress={() => addCategoryWithRecords(true)}
         />
       </View>
       <ScrollView style={styles.buttons}>
@@ -94,6 +99,9 @@ const styles = StyleSheet.create({
   },
   buttons: {
     paddingTop: 50,
+  },
+  spacer: {
+    paddingBottom: 20,
   },
   text: {
     color: 'black',
